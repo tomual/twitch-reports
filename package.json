@@ -1,0 +1,25 @@
+{
+  "name": "twitch-reports",
+  "version": "1.0.0",
+  "description": "",
+  "main": "what.js",
+  "dependencies": {
+    "env": "0.0.2",
+    "fs": "^0.0.1-security",
+    "request": "^2.87.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomual/twitch-reports.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomual/twitch-reports/issues"
+  },
+  "homepage": "https://github.com/tomual/twitch-reports#readme"
+}
