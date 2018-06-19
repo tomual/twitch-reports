@@ -4,6 +4,7 @@
   "description": "",
   "main": "what.js",
   "dependencies": {
+    "config": "^1.30.0",
     "env": "0.0.2",
     "fs": "^0.0.1-security",
     "request": "^2.87.0"

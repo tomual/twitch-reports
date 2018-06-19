@@ -1,12 +1,13 @@
 var request = require('request');
 var fs = require('fs');
+var config = require('config');
 
 var games = [];
 
 var options = {
   url: 'https://api.twitch.tv/helix/games/top?first=100',
   headers: {
-    'Client-ID': undefined
+    'Client-ID': config.get('ENV.CLIENTID')
   }
 };
 request(options, getGames);
@@ -80,7 +81,7 @@ function nextGame() {
     	console.log(report);
 
     	var currentTime = new Date();
-    	fs.writeFile("reports/" + currentTime.toISOString() + ".js", JSON.stringify(report), function(err) {
+    	fs.writeFile("reports/" + currentTime.toISOString() + ".js", JSON.stringify(report), { flag: 'wx' }, function(err) {
     	    if(err) {
     	        return console.log(err);
     	    }
