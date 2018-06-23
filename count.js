@@ -81,7 +81,7 @@ function nextGame() {
     	console.log(report);
 
     	var currentTime = new Date();
-    	fs.writeFile("reports/" + currentTime.toISOString() + ".js", JSON.stringify(report), { flag: 'wx' }, function(err) {
+    	fs.writeFile("public_html/twitch-reports/reports/" + currentTime.toISOString() + ".js", JSON.stringify(report), { flag: 'wx' }, function(err) {
     	    if(err) {
     	        return console.log(err);
     	    }

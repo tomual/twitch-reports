@@ -1,50 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Twitch Reports</title>
-    <meta name="description" content="Twitch reports">
-	<script src="https://tabler.github.io/tabler/assets/js/vendors/jquery-3.2.1.min.js"></script>
-	<script src="https://tabler.github.io/tabler/assets/js/vendors/bootstrap.bundle.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="https://tabler.github.io/tabler/assets/css/dashboard.css">
-	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,500,500i,600,600i,700,700i&subset=latin-ext">
-	<link rel="stylesheet" type="text/css" href="https://tabler.github.io/tabler/assets/css/dashboard.css">
+<?php
+$dir = 'reports';
+$files = scandir($dir);
+$today = date('Y-m-d', strtotime('-1 day'));
+$reports_files = array();
 
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WH3SL76');</script>
-    <!-- End Google Tag Manager -->
-</head>
-<body>
- <div class="page">
-    <div class="page-single">
-        <div class="container">
-            <div class="row m-6">
-                <div class="col-lg-6 m-auto">
-                    <div class="card">
-                        <div class="card-header p-6">
-                            <div class="card-title">Twitch Reports</div>
-                        </div>
+foreach ($files as $file) {
+    if (strpos($file, $today) !== false) {
+        $reports_files[] = $file;
+    }
+}
 
-                        <div class="table-responsive">
-                            <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
-                            </table>
-                        </div>
-                    </div>
-                    <div class="text-center text-muted small">
-                        Written by <a href="https://tomual.com/">tomual</a> using data from the official Twitch API</a>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WH3SL76"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-</body>
-</html>
+$averages = array();
+$dictionary = array();
+
+foreach ($reports_files as $filename) {
+    $json = file_get_contents($dir . '/' . $filename);
+    $report = json_decode($json);
+
+    foreach ($report as $data) {
+        if (!isset($dictionary[$data->id])) {
+            $dictionary[$data->id] = $data->name;
+        }
+
+        if (!isset($averages[$data->id])) {
+            $averages[$data->id] = [
+                'viewers' => $data->viewers,
+                'streams' => $data->streams,
+                'count' => 1,
+            ];
+        } else {
+            $average = [
+                'viewers' => $averages[$data->id]['viewers'] + $data->viewers,
+                'streams' => $averages[$data->id]['streams'] + $data->streams,
+                'count' => $averages[$data->id]['count'] + 1,
+            ];
+            $averages[$data->id] = $average;
+        }
+    }
+}
+
+foreach ($averages as $game_id => $average) {
+    $averages[$game_id] = [
+        'viewers' => $averages[$game_id]['viewers'] / $averages[$game_id]['count'],
+        'streams' => $averages[$game_id]['streams'] / $averages[$game_id]['count'],
+    ];
+}
+
+$json = file_get_contents('data/data.json');
+$json = json_decode($json);
+$json->data->{$today} = $averages;
+file_put_contents('data/data.json', json_encode($json));
+file_put_contents('data/dictionary.json', json_encode($dictionary));
+?>
