@@ -1,0 +1,7 @@
+{
+  "ENV": {
+    "CLIENT_ID": "qwerty",
+    "CLIENT_SECRET": "asdfgh",
+    "SAVE_PATH": "public_html/twitch-reports/reports/"
+  }
+}

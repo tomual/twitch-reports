@@ -61,4 +61,3 @@ typings/
 .next
 data/*
 reports/*
-config/default.json
