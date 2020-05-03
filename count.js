@@ -13,7 +13,7 @@ request.post({url:'https://id.twitch.tv/oauth2/token', qs:propertiesObject}, get
 
 function getGames(error, response, body) {
 	options = {
-	  url: 'https://api.twitch.tv/helix/games/top?first=10',
+	  url: 'https://api.twitch.tv/helix/games/top?first=1',
 	  headers: {
 	    'Client-ID': config.get('ENV.CLIENT_ID'),
 	    'Authorization': 'Bearer ' + body.access_token
@@ -92,8 +92,11 @@ function nextGame() {
 		scrollStreams();
 	} else {
     	console.log(report);
-    	var currentTime = new Date();
-    	fs.writeFile(config.get('ENV.SAVE_PATH') + currentTime.toISOString() + ".js", JSON.stringify(report), { flag: 'wx' }, function(err) {
+		var time = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+		var date = new Date().toISOString().replace(/(.*)T.*/, "$1");
+		var filename = date + time + ".js";
+		filename = filename.replace(/:|-/gi, "");
+		fs.writeFile(config.get('ENV.SAVE_PATH') + filename, JSON.stringify(report), { flag: 'wx' }, function(err) {
     	    if(err) {
     	        return console.log(err);
     	    }
